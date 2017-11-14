@@ -2,6 +2,8 @@ package com.github.teocci.codesample.av.streaming.interfaces;
 
 import javafx.scene.image.Image;
 
+import javax.sound.sampled.FloatControl;
+
 /**
  * Created by teocci.
  *
@@ -12,4 +14,8 @@ public interface GrabberListener
     void onMediaGrabbed(int width, int height);
 
     void onImageProcessed(Image image);
+
+    void onPlaying();
+
+    void onGainControl(FloatControl gainControl);
 }

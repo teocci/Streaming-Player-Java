@@ -10,11 +10,14 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.concurrent.ExecutorService;
@@ -47,15 +50,12 @@ public class SimplePlayer
         playThread = new Thread(() -> {
             try {
                 FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(source);
-                grabber.setOption("preset", "ultrafast");
-                grabber.setOption("tune", "fastdecode");
-                grabber.setOption("bframes", "0");
                 grabber.start();
 
                 grabberListener.onMediaGrabbed(grabber.getImageWidth(), grabber.getImageHeight());
 
                 if (grabber.getSampleRate() > 0 && grabber.getAudioChannels() > 0) {
-                    AudioFormat audioFormat= new AudioFormat(grabber.getSampleRate(), 16, grabber.getAudioChannels(), true, true);
+                    AudioFormat audioFormat = new AudioFormat(grabber.getSampleRate(), 16, grabber.getAudioChannels(), true, true);
 
                     DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
                     soundLine = (SourceDataLine) AudioSystem.getLine(info);
@@ -65,7 +65,7 @@ public class SimplePlayer
 
                 Java2DFrameConverter converter = new Java2DFrameConverter();
 
-                ExecutorService executor = Executors.newSingleThreadExecutor();
+//                ExecutorService executor = Executors.newSingleThreadExecutor();
 
                 while (!Thread.interrupted()) {
                     Frame frame = grabber.grab();
@@ -74,29 +74,60 @@ public class SimplePlayer
                         break;
                     }
                     if (frame.image != null) {
-                        BufferedImage bufferedImage = converter.convert(frame);
-                        if (bufferedImage == null) return;
-                        Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-//                            grabberListener.onImageProcessed(image);
-//
-//                            BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
-//                            try {
-//                                File outputFile = new File("saved" + counter++ + ".png");
-//                                ImageIO.write(bImage, "png", outputFile);
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                                System.out.println("Exception caught: " + e);
-//                            }
 
-                            timer = new AnimationTimer()
-                            {
-                                @Override
-                                public void handle(long now)
-                                {
-                                    grabberListener.onImageProcessed(image);
-                                }
-                            };
-                            timer.start();
+                        Image image = SwingFXUtils.toFXImage(converter.convert(frame), null);
+                        Platform.runLater(() -> {
+                            grabberListener.onImageProcessed(image);
+                        });
+
+//                        Platform.runLater(() -> {
+//                            Image image = SwingFXUtils.toFXImage(converter.convert(frame), null);
+//                            grabberListener.onImageProcessed(image);
+//                        });
+
+//                        try {
+//                            executor.submit(() -> {
+//                                Image image = SwingFXUtils.toFXImage(converter.convert(frame), null);
+//                                grabberListener.onImageProcessed(image);
+//                            }).get();
+//                        } catch (InterruptedException interruptedException) {
+//                            Thread.currentThread().interrupt();
+//                        }
+
+//                        timer = new AnimationTimer()
+//                        {
+//                            @Override
+//                            public void handle(long now)
+//                            {
+//                                Image image = SwingFXUtils.toFXImage(converter.convert(frame), null);
+//                                grabberListener.onImageProcessed(image);
+//                            }
+//                        };
+//                        timer.start();
+
+//                        timer = new AnimationTimer()
+//                        {
+//                            @Override
+//                            public void handle(long now)
+//                            {
+//                                BufferedImage bufferedImage = null;
+//                                bufferedImage = converter.convert(frame);
+//                                if (bufferedImage == null) return;
+//                                Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+////                            grabberListener.onImageProcessed(image);
+////
+////                                BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
+////                                try {
+////                                    File outputFile = new File("saved" + counter++ + ".png");
+////                                    ImageIO.write(bImage, "png", outputFile);
+////                                } catch (IOException e) {
+////                                    e.printStackTrace();
+////                                    System.out.println("Exception caught: " + e);
+////                                }
+//                                grabberListener.onImageProcessed(image);
+//                            }
+//                        };
+//                        timer.start();
                     } else if (frame.samples != null) {
                         ShortBuffer channelSamplesFloatBuffer = (ShortBuffer) frame.samples[0];
                         channelSamplesFloatBuffer.rewind();
@@ -110,23 +141,30 @@ public class SimplePlayer
 
                         // We need this because soundLine.write ignores
                         // interruptions during writing.
-                        if (soundLine == null) return;
-                        try {
-                            executor.submit(() -> {
-                                soundLine.write(outBuffer.array(), 0, outBuffer.capacity());
-                                outBuffer.clear();
-                            }).get();
-                        } catch (InterruptedException interruptedException) {
-                            Thread.currentThread().interrupt();
-                        }
+
+
+//                        if (soundLine == null) return;
+//                        Platform.runLater(() -> {
+//                            soundLine.write(outBuffer.array(), 0, outBuffer.capacity());
+//                            outBuffer.clear();
+//                        });
+
+//                        try {
+//                            executor.submit(() -> {
+//                                soundLine.write(outBuffer.array(), 0, outBuffer.capacity());
+//                                outBuffer.clear();
+//                            }).get();
+//                        } catch (InterruptedException interruptedException) {
+//                            Thread.currentThread().interrupt();
+//                        }
                     }
                 }
-                executor.shutdownNow();
-                executor.awaitTermination(10, TimeUnit.SECONDS);
+//                executor.shutdownNow();
+//                executor.awaitTermination(10, TimeUnit.SECONDS);
 
-                if (soundLine != null) {
-                    soundLine.stop();
-                }
+//                if (soundLine != null) {
+//                    soundLine.stop();
+//                }
                 grabber.stop();
                 grabber.release();
                 Platform.exit();

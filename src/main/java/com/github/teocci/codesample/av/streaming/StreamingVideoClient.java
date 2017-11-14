@@ -8,21 +8,21 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import javax.sound.sampled.FloatControl;
-import java.nio.ByteBuffer;
 
 /**
  * Created by teocci.
  *
  * @author teocci@yandex.com on 2017-Nov-01
  */
-public class StreamingClient extends Application implements GrabberListener
+public class StreamingVideoClient extends Application implements GrabberListener
 {
-    private static final String TAG = LogHelper.makeLogTag(StreamingClient.class);
+    private static final String TAG = LogHelper.makeLogTag(StreamingVideoClient.class);
 
     public static void main(String[] args)
     {
@@ -30,41 +30,32 @@ public class StreamingClient extends Application implements GrabberListener
     }
 
     private Stage primaryStage;
-//    private Canvas canvas;
+    private Canvas canvas;
     private ImageView imageView;
 
-//    private GraphicsContext graphicsContext;
-//    private PixelWriter pixelWriter;
-//    private WritablePixelFormat<ByteBuffer> pixelFormat;
+    private GraphicsContext graphicsContext;
 
     private SimplePlayer simplePlayer;
 
     @Override
     public void start(Stage stage) throws Exception
     {
-        String source = "rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov"; // the video is weird for 1 minute then becomes stable
-//        String source = "rtsp://192.168.1.113:8086"; // the SmartCam app the video is bad
+//        String source = "rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov"; // the video is weird for 1 minute then becomes stable
+        String source = "rtsp://192.168.1.120:8086"; // the SmartCam app the video is bad
 
 //        String source = "http://192.168.1.215:8080/video";
 //        String source = "rtsp://192.168.1.215:8086";
 
         primaryStage = stage;
-//        canvas = new Canvas();
-        imageView = new ImageView();
+        canvas = new Canvas();
 
-//        graphicsContext = canvas.getGraphicsContext2D();
-//        pixelWriter = canvas.getGraphicsContext2D().getPixelWriter();
-//        pixelFormat = PixelFormat.getByteBgraInstance();
+        graphicsContext = canvas.getGraphicsContext2D();
 
         StackPane root = new StackPane();
 
-//        root.getChildren().add(canvas);
-//        canvas.widthProperty().bind(primaryStage.widthProperty());
-//        canvas.heightProperty().bind(primaryStage.heightProperty());
-
-        root.getChildren().add(imageView);
-        imageView.fitWidthProperty().bind(primaryStage.widthProperty());
-        imageView.fitHeightProperty().bind(primaryStage.heightProperty());
+        root.getChildren().add(canvas);
+        canvas.widthProperty().bind(primaryStage.widthProperty());
+        canvas.heightProperty().bind(primaryStage.heightProperty());
 
         Scene scene = new Scene(root, 640, 480);
 
@@ -88,8 +79,8 @@ public class StreamingClient extends Application implements GrabberListener
         LogHelper.e(TAG, "image: " + image);
 
         Platform.runLater(() -> {
-            imageView.setImage(image);
-//            graphicsContext.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
+//            imageView.setImage(image);
+            graphicsContext.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
         });
     }
 
