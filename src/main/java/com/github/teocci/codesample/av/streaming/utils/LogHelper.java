@@ -17,7 +17,7 @@ import static com.github.teocci.codesample.av.streaming.utils.Config.LOG_PREFIX;
 public class LogHelper
 {
     private static final int LOG_PREFIX_LENGTH = LOG_PREFIX.length();
-    private static final int MAX_LOG_TAG_LENGTH = 23;
+    private static final int MAX_LOG_TAG_LENGTH = 30;
     private static final int RESERVED_LENGTH = MAX_LOG_TAG_LENGTH - LOG_PREFIX_LENGTH - 2;
 
     private static final PrintStream Log = System.out;

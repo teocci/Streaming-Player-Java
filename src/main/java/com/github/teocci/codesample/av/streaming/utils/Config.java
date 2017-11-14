@@ -9,5 +9,5 @@ public class Config
 {
     public static String EOL = "\r\n";
 
-    public static final String LOG_PREFIX = "[Streaming]";
+    public static final String LOG_PREFIX = "[AVMixer]";
 }
