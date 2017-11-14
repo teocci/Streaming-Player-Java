@@ -2,7 +2,9 @@ package com.github.teocci.codesample.av.streaming;
 
 import com.github.teocci.codesample.av.streaming.interfaces.GrabberListener;
 import com.github.teocci.codesample.av.streaming.media.SimplePlayer;
+import com.github.teocci.codesample.av.streaming.utils.LogHelper;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -11,7 +13,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.nio.ByteBuffer;
-import java.util.logging.Logger;
 
 /**
  * Created by teocci.
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
  */
 public class StreamingClient extends Application implements GrabberListener
 {
-    private static final Logger LOG = Logger.getLogger(StreamingClient.class.getName());
+    private static final String TAG = LogHelper.makeLogTag(StreamingClient.class);
 
     public static void main(String[] args)
     {
@@ -28,39 +29,45 @@ public class StreamingClient extends Application implements GrabberListener
     }
 
     private Stage primaryStage;
-    private Canvas canvas;
+//    private Canvas canvas;
+    private ImageView imageView;
 
-    private GraphicsContext graphicsContext;
-    private PixelWriter pixelWriter;
-    private WritablePixelFormat<ByteBuffer> pixelFormat;
+//    private GraphicsContext graphicsContext;
+//    private PixelWriter pixelWriter;
+//    private WritablePixelFormat<ByteBuffer> pixelFormat;
 
     private SimplePlayer simplePlayer;
 
     @Override
     public void start(Stage stage) throws Exception
     {
-        String source = "rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov"; // the sound is weird
-//        String source = "rtsp://192.168.1.113:8086"; // the SmartCam app the video is bad
+//        String source = "rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov"; // the video is weird for 1 minute then becomes stable
+        String source = "rtsp://192.168.1.113:8086"; // the SmartCam app the video is bad
 
 //        String source = "http://192.168.1.215:8080/video";
 //        String source = "rtsp://192.168.1.215:8086";
 
         primaryStage = stage;
-        canvas = new Canvas();
+//        canvas = new Canvas();
+        imageView = new ImageView();
 
-        graphicsContext = canvas.getGraphicsContext2D();
-        pixelWriter = canvas.getGraphicsContext2D().getPixelWriter();
-        pixelFormat = PixelFormat.getByteBgraInstance();
+//        graphicsContext = canvas.getGraphicsContext2D();
+//        pixelWriter = canvas.getGraphicsContext2D().getPixelWriter();
+//        pixelFormat = PixelFormat.getByteBgraInstance();
 
         StackPane root = new StackPane();
 
-        root.getChildren().add(canvas);
-        canvas.widthProperty().bind(primaryStage.widthProperty());
-        canvas.heightProperty().bind(primaryStage.heightProperty());
+//        root.getChildren().add(canvas);
+//        canvas.widthProperty().bind(primaryStage.widthProperty());
+//        canvas.heightProperty().bind(primaryStage.heightProperty());
+
+        root.getChildren().add(imageView);
+        imageView.fitWidthProperty().bind(primaryStage.widthProperty());
+        imageView.fitHeightProperty().bind(primaryStage.heightProperty());
 
         Scene scene = new Scene(root, 640, 480);
 
-        primaryStage.setTitle("Video + Audio");
+        primaryStage.setTitle("Streaming Player");
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -77,8 +84,12 @@ public class StreamingClient extends Application implements GrabberListener
     @Override
     public void onImageProcessed(Image image)
     {
-        System.out.println("image: " + image);
-        graphicsContext.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
+        LogHelper.e(TAG, "image: " + image);
+
+        Platform.runLater(() -> {
+            imageView.setImage(image);
+//            graphicsContext.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
+        });
     }
 
     @Override

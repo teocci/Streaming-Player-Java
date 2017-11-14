@@ -7,8 +7,7 @@ package com.github.teocci.codesample.av.streaming.utils;
  */
 public class Config
 {
-
     public static String EOL = "\r\n";
 
-    public static final String LOG_PREFIX = "[RTSP]";
+    public static final String LOG_PREFIX = "[Streaming]";
 }

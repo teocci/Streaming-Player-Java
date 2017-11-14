@@ -1,6 +1,7 @@
 package com.github.teocci.codesample.av.streaming.media;
 
 import com.github.teocci.codesample.av.streaming.interfaces.GrabberListener;
+import com.github.teocci.codesample.av.streaming.utils.LogHelper;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -15,7 +16,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -29,9 +30,7 @@ import java.util.logging.Logger;
  */
 public class SimplePlayer
 {
-    private static final Logger LOG = Logger.getLogger(SimplePlayer.class.getName());
-
-    private static final double SC16 = (double) 0x7FFF + 0.4999999999999999;
+    private static final String TAG = LogHelper.makeLogTag(SimplePlayer.class);
 
     private static volatile Thread playThread;
     private AnimationTimer timer;
@@ -73,16 +72,15 @@ public class SimplePlayer
                 while (!Thread.interrupted()) {
                     Frame frame = grabber.grab();
                     if (frame == null) {
-                        System.out.println("frame: null");
+                        LogHelper.e(TAG, "frame: null");
                         break;
                     }
                     if (frame.image != null) {
                         BufferedImage bufferedImage = converter.convert(frame);
                         if (bufferedImage == null) return;
-
-                        Platform.runLater(() -> {
-                            Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-
+                        Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+//                            grabberListener.onImageProcessed(image);
+//
 //                            BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
 //                            try {
 //                                File outputFile = new File("saved" + counter++ + ".png");
@@ -91,26 +89,24 @@ public class SimplePlayer
 //                                e.printStackTrace();
 //                                System.out.println("Exception caught: " + e);
 //                            }
-                            grabberListener.onImageProcessed(image);
 
-//                            timer = new AnimationTimer()
-//                            {
-//                                @Override
-//                                public void handle(long now)
-//                                {
-//                                    grabberListener.onImageProcessed(image);
-//                                }
-//                            };
-//                            timer.start();
-                        });
+                            timer = new AnimationTimer()
+                            {
+                                @Override
+                                public void handle(long now)
+                                {
+                                    grabberListener.onImageProcessed(image);
+                                }
+                            };
+                            timer.start();
                     } else if (frame.samples != null) {
-                        FloatBuffer channelSamplesFloatBuffer = (FloatBuffer) frame.samples[0];
+                        ShortBuffer channelSamplesFloatBuffer = (ShortBuffer) frame.samples[0];
                         channelSamplesFloatBuffer.rewind();
 
                         ByteBuffer outBuffer = ByteBuffer.allocate(channelSamplesFloatBuffer.capacity() * 2);
 
                         for (int i = 0; i < channelSamplesFloatBuffer.capacity(); i++) {
-                            short val = (short) ((double) channelSamplesFloatBuffer.get(i) * SC16);
+                            short val = channelSamplesFloatBuffer.get(i);
                             outBuffer.putShort(val);
                         }
 
@@ -137,7 +133,7 @@ public class SimplePlayer
                 grabber.release();
                 Platform.exit();
             } catch (Exception exception) {
-                LOG.log(Level.SEVERE, null, exception);
+                LogHelper.e(TAG, exception);
                 System.exit(1);
             }
         });

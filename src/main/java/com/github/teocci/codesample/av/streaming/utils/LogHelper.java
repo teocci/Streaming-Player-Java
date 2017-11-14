@@ -4,6 +4,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.github.teocci.codesample.av.streaming.utils.Config.LOG_PREFIX;
 
@@ -40,15 +42,12 @@ public class LogHelper
     {
         // Only log VERBOSE if build type is DEBUG
         log(tag, null, messages);
-
     }
 
     public static void d(String tag, Object... messages)
     {
         // Only log DEBUG if build type is DEBUG
-
         log(tag, null, messages);
-
     }
 
     public static void i(String tag, Object... messages)
