@@ -45,14 +45,14 @@ public class StreamingAudioClient extends Application
 
     private AudioPlayer audioPlayerA;
     private AudioPlayer audioPlayerB;
+    private AudioPlayer audioPlayerC;
 
     private GrabberListener grabberListenerA = new GrabberListener()
     {
         @Override
         public void onMediaGrabbed(int width, int height)
         {
-            primaryStage.setWidth(width);
-            primaryStage.setHeight(height);
+
         }
 
         @Override
@@ -83,8 +83,43 @@ public class StreamingAudioClient extends Application
         @Override
         public void onMediaGrabbed(int width, int height)
         {
-            primaryStage.setWidth(width);
-            primaryStage.setHeight(height);
+
+        }
+
+        @Override
+        public void onImageProcessed(Image image)
+        {
+            LogHelper.e(TAG, "image: " + image);
+
+            Platform.runLater(() -> {
+                imageView.setImage(image);
+//            graphicsContext.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
+            });
+        }
+
+        @Override
+        public void onPlaying()
+        {
+
+        }
+
+        @Override
+        public void onGainControl(FloatControl gainControl)
+        {
+            Platform.runLater(() -> {
+                VolumeSlider vs = new VolumeSlider(gainControl);
+                root.getChildren().add(new Label(gainControl.toString()));
+                root.getChildren().add(vs.getVolume());
+            });
+        }
+    };
+
+    private GrabberListener grabberListenerC = new GrabberListener()
+    {
+        @Override
+        public void onMediaGrabbed(int width, int height)
+        {
+
         }
 
         @Override
@@ -119,8 +154,12 @@ public class StreamingAudioClient extends Application
     public void start(Stage stage) throws Exception
     {
 //        String source = "rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov"; // the video is weird for 1 minute then becomes stable
-        String sourceA = "rtsp://192.168.1.113:8086"; // the SmartCam app the video is bad
-        String sourceB = "rtsp://192.168.1.215:8086"; // the SmartCam app the video is bad
+//        String sourceA = "rtsp://192.168.1.113:8086"; // the SmartCam app the video is bad
+//        String sourceB = "rtsp://192.168.1.215:8086"; // the SmartCam app the video is bad
+//        String sourceC = "rtsp://192.168.1.215:8086"; // the SmartCam app the video is bad
+        String sourceA = "rtsp://192.168.1.119:8086"; // the SmartCam app the video is bad
+        String sourceB = "rtsp://192.168.1.128:8086"; // the SmartCam app the video is bad
+        String sourceC = "rtsp://192.168.1.133:8086"; // the SmartCam app the video is bad
 
         primaryStage = stage;
         imageView = new ImageView();
@@ -157,6 +196,7 @@ public class StreamingAudioClient extends Application
 
         audioPlayerA = new AudioPlayer(sourceA, grabberListenerA);
         audioPlayerB = new AudioPlayer(sourceB, grabberListenerB);
+        audioPlayerC = new AudioPlayer(sourceC, grabberListenerC);
     }
 
     @Override
@@ -164,5 +204,6 @@ public class StreamingAudioClient extends Application
     {
         audioPlayerA.stop();
         audioPlayerB.stop();
+        audioPlayerC.stop();
     }
 }

@@ -8,8 +8,8 @@
     <artifactId>streaming-client</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>streaming-client</name>
-
     <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>org.bytedeco</groupId>

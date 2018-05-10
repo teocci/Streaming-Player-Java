@@ -50,6 +50,7 @@ public class SimplePlayer
         playThread = new Thread(() -> {
             try {
                 FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(source);
+                grabber.setOption("rtsp_transport", "tcp");
                 grabber.start();
 
                 grabberListener.onMediaGrabbed(grabber.getImageWidth(), grabber.getImageHeight());

@@ -41,7 +41,7 @@ public class StreamingVideoClient extends Application implements GrabberListener
     public void start(Stage stage) throws Exception
     {
 //        String source = "rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov"; // the video is weird for 1 minute then becomes stable
-        String source = "rtsp://192.168.1.120:8086"; // the SmartCam app the video is bad
+        String source = "rtsp://192.168.20.11:8086"; // the SmartCam app the video is bad
 
 //        String source = "http://192.168.1.215:8080/video";
 //        String source = "rtsp://192.168.1.215:8086";
