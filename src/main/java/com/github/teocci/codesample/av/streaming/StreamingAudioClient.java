@@ -2,21 +2,18 @@ package com.github.teocci.codesample.av.streaming;
 
 import com.github.teocci.codesample.av.streaming.interfaces.GrabberListener;
 import com.github.teocci.codesample.av.streaming.media.AudioPlayer;
-import com.github.teocci.codesample.av.streaming.media.SimplePlayer;
 import com.github.teocci.codesample.av.streaming.media.VolumeSlider;
 import com.github.teocci.codesample.av.streaming.utils.LogHelper;
+import com.github.teocci.codesample.av.streaming.elements.HorizontalVUMeter;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import javax.sound.sampled.FloatControl;
 
@@ -40,6 +37,8 @@ public class StreamingAudioClient extends Application
     private StackPane root;
     private Scene scene;
 
+    private HorizontalVUMeter vuMeter = new HorizontalVUMeter();
+
     private Pane paneA;
     private Pane paneB;
 
@@ -47,44 +46,55 @@ public class StreamingAudioClient extends Application
     private AudioPlayer audioPlayerB;
     private AudioPlayer audioPlayerC;
 
+    private FloatControl gainControl;
+
     private GrabberListener grabberListenerA = new GrabberListener()
     {
         @Override
-        public void onMediaGrabbed(int width, int height)
-        {
-
-        }
+        public void onMediaGrabbed(int width, int height) {}
 
         @Override
-        public void onImageProcessed(Image image)
-        {
-
-        }
+        public void onImageProcessed(Image image) {}
 
         @Override
-        public void onPlaying()
-        {
+        public void onPlaying() {}
 
+        @Override
+        public void onStop()
+        {
+            audioPlayerA.stop();
         }
 
         @Override
         public void onGainControl(FloatControl gainControl)
         {
-            Platform.runLater(() -> {
-                VolumeSlider vs = new VolumeSlider(gainControl);
-                paneA.getChildren().add(new Label(gainControl.toString()));
-                paneA.getChildren().add(vs.getVolume());
-            });
+            updateVolumeControl(paneA, gainControl);
+        }
+
+        @Override
+        public void onAudioSpectrum(float amplitude, float magnitude)
+        {
+//            LogHelper.e(TAG, "amplitude: " + amplitude + " | magnitude: " + magnitude);
+            if (Platform.isFxApplicationThread()) {
+                vuMeter.setValue(magnitude);
+            } else {
+                Platform.runLater(() -> {
+                    vuMeter.setValue(magnitude/20);
+                });
+            }
+        }
+
+        @Override
+        public void onError(Exception e)
+        {
+            audioPlayerA.stop();
         }
     };
 
     private GrabberListener grabberListenerB = new GrabberListener()
     {
         @Override
-        public void onMediaGrabbed(int width, int height)
-        {
-
-        }
+        public void onMediaGrabbed(int width, int height) {}
 
         @Override
         public void onImageProcessed(Image image)
@@ -98,29 +108,28 @@ public class StreamingAudioClient extends Application
         }
 
         @Override
-        public void onPlaying()
-        {
+        public void onPlaying() {}
 
-        }
+        @Override
+        public void onStop() {}
 
         @Override
         public void onGainControl(FloatControl gainControl)
         {
-            Platform.runLater(() -> {
-                VolumeSlider vs = new VolumeSlider(gainControl);
-                root.getChildren().add(new Label(gainControl.toString()));
-                root.getChildren().add(vs.getVolume());
-            });
+            updateVolumeControl(paneB, gainControl);
         }
+
+        @Override
+        public void onAudioSpectrum(float amplitude, float magnitude) {}
+
+        @Override
+        public void onError(Exception e) {}
     };
 
     private GrabberListener grabberListenerC = new GrabberListener()
     {
         @Override
-        public void onMediaGrabbed(int width, int height)
-        {
-
-        }
+        public void onMediaGrabbed(int width, int height) {}
 
         @Override
         public void onImageProcessed(Image image)
@@ -129,25 +138,27 @@ public class StreamingAudioClient extends Application
 
             Platform.runLater(() -> {
                 imageView.setImage(image);
-//            graphicsContext.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
+//                graphicsContext.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
             });
         }
 
         @Override
-        public void onPlaying()
-        {
+        public void onPlaying() {}
 
-        }
+        @Override
+        public void onStop() {}
 
         @Override
         public void onGainControl(FloatControl gainControl)
         {
-            Platform.runLater(() -> {
-                VolumeSlider vs = new VolumeSlider(gainControl);
-                root.getChildren().add(new Label(gainControl.toString()));
-                root.getChildren().add(vs.getVolume());
-            });
+            updateVolumeControl(paneA, gainControl);
         }
+
+        @Override
+        public void onAudioSpectrum(float amplitude, float magnitude) {}
+
+        @Override
+        public void onError(Exception e) {}
     };
 
     @Override
@@ -157,9 +168,10 @@ public class StreamingAudioClient extends Application
 //        String sourceA = "rtsp://192.168.1.113:8086"; // the SmartCam app the video is bad
 //        String sourceB = "rtsp://192.168.1.215:8086"; // the SmartCam app the video is bad
 //        String sourceC = "rtsp://192.168.1.215:8086"; // the SmartCam app the video is bad
-        String sourceA = "rtsp://192.168.1.119:8086"; // the SmartCam app the video is bad
-        String sourceB = "rtsp://192.168.1.128:8086"; // the SmartCam app the video is bad
-        String sourceC = "rtsp://192.168.1.133:8086"; // the SmartCam app the video is bad
+//        String sourceA = "rtsp://192.168.1.119:8086"; // the SmartCam app the video is bad
+//        String sourceB = "rtsp://192.168.1.128:8086"; // the SmartCam app the video is bad
+//        String sourceC = "rtsp://192.168.1.133:8086"; // the SmartCam app the video is bad
+        String sourceA = "rtsp://192.168.20.11:8086";
 
         primaryStage = stage;
         imageView = new ImageView();
@@ -171,6 +183,12 @@ public class StreamingAudioClient extends Application
         imageView.fitHeightProperty().bind(primaryStage.heightProperty());
 
         scene = new Scene(root, 640, 480);
+        scene.getStylesheets().add("css/style.css");
+
+        vuMeter.setId("vu-meter");
+        vuMeter.setValue(0);
+//        vuMeter.setLayoutX(54);
+//        vuMeter.setLayoutY(177);
 
         primaryStage.setTitle("Streaming Audio Player");
         primaryStage.setScene(scene);
@@ -182,8 +200,9 @@ public class StreamingAudioClient extends Application
         });
 
         paneA = new Pane();
-        paneA.layoutXProperty().add(0);
-        paneA.layoutXProperty().add(100);
+//        paneA.setTranslateX(20);
+//        paneA.setTranslateY(20);
+
         paneA.widthProperty().add(primaryStage.widthProperty());
         paneA.heightProperty().add(primaryStage.heightProperty());
         root.getChildren().add(paneA);
@@ -195,15 +214,26 @@ public class StreamingAudioClient extends Application
 //        root.getChildren().add(paneB);
 
         audioPlayerA = new AudioPlayer(sourceA, grabberListenerA);
-        audioPlayerB = new AudioPlayer(sourceB, grabberListenerB);
-        audioPlayerC = new AudioPlayer(sourceC, grabberListenerC);
+//        audioPlayerB = new AudioPlayer(sourceB, grabberListenerB);
+//        audioPlayerC = new AudioPlayer(sourceC, grabberListenerC);
     }
 
     @Override
     public void stop() throws Exception
     {
         audioPlayerA.stop();
-        audioPlayerB.stop();
-        audioPlayerC.stop();
+//            audioPlayerB.closeAllWindows();
+//            audioPlayerC.closeAllWindows();
+    }
+
+    private void updateVolumeControl(Pane pane, FloatControl gainControl)
+    {
+        Platform.runLater(() -> {
+            VBox control = new VBox(5);
+            VolumeSlider vs = new VolumeSlider(gainControl);
+            control.getChildren().addAll(vs.getControl(), vuMeter);
+
+            pane.getChildren().add(control);
+        });
     }
 }

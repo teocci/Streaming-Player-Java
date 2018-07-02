@@ -85,15 +85,22 @@ public class StreamingVideoClient extends Application implements GrabberListener
     }
 
     @Override
-    public void onPlaying()
-    {
+    public void onPlaying() {}
 
+    @Override
+    public void onStop() {
+        simplePlayer.stop();
     }
 
     @Override
-    public void onGainControl(FloatControl gainControl)
-    {
+    public void onGainControl(FloatControl gainControl) {}
 
+    @Override
+    public void onAudioSpectrum(float amplitude, float magnitude) {}
+
+    @Override
+    public void onError(Exception e) {
+        simplePlayer.stop();
     }
 
     @Override

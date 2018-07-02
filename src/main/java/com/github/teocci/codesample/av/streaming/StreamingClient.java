@@ -30,7 +30,7 @@ public class StreamingClient extends Application implements GrabberListener
     }
 
     private Stage primaryStage;
-//    private Canvas canvas;
+    //    private Canvas canvas;
     private ImageView imageView;
 
 //    private GraphicsContext graphicsContext;
@@ -94,19 +94,28 @@ public class StreamingClient extends Application implements GrabberListener
     }
 
     @Override
-    public void onPlaying()
-    {
-
-    }
-
-    @Override
-    public void onGainControl(FloatControl gainControl)
-    {
-
-    }
+    public void onPlaying() {}
 
     @Override
     public void stop() throws Exception
+    {
+        simplePlayer.stop();
+    }
+
+    @Override
+    public void onStop()
+    {
+        simplePlayer.stop();
+    }
+
+    @Override
+    public void onGainControl(FloatControl gainControl) {}
+
+    @Override
+    public void onAudioSpectrum(float amplitude, float magnitude) {}
+
+    @Override
+    public void onError(Exception e)
     {
         simplePlayer.stop();
     }

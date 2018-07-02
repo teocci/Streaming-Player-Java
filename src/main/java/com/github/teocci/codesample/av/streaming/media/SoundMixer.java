@@ -5,7 +5,6 @@ import com.github.teocci.codesample.av.streaming.utils.LogHelper;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -54,7 +53,7 @@ public class SoundMixer extends Application
                             FloatControl.Type.MASTER_GAIN);
                     VolumeSlider vs = new VolumeSlider(volCtrl);
                     root.getChildren().add(new Label(volCtrl.toString()));
-                    root.getChildren().add(vs.getVolume());
+                    root.getChildren().add(vs.getControl());
                     LogHelper.e(TAG, "volCtrl.getValue() = " + volCtrl.getValue());
                 } catch (LineUnavailableException e) {
                     e.printStackTrace();

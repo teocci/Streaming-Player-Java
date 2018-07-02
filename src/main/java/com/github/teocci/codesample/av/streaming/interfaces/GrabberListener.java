@@ -17,5 +17,11 @@ public interface GrabberListener
 
     void onPlaying();
 
+    void onStop();
+
     void onGainControl(FloatControl gainControl);
+
+    void onAudioSpectrum(float amplitude, float magnitude);
+
+    void onError(Exception e);
 }

@@ -10,19 +10,12 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
-import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by teocci.
@@ -75,7 +68,6 @@ public class SimplePlayer
                         break;
                     }
                     if (frame.image != null) {
-
                         Image image = SwingFXUtils.toFXImage(converter.convert(frame), null);
                         Platform.runLater(() -> {
                             grabberListener.onImageProcessed(image);
@@ -164,14 +156,19 @@ public class SimplePlayer
 //                executor.awaitTermination(10, TimeUnit.SECONDS);
 
 //                if (soundLine != null) {
-//                    soundLine.stop();
+//                    soundLine.closeAllWindows();
 //                }
                 grabber.stop();
                 grabber.release();
-                Platform.exit();
-            } catch (Exception exception) {
-                LogHelper.e(TAG, exception);
-                System.exit(1);
+                grabberListener.onStop();
+//                Platform.exit();
+            } catch (Exception e) {
+                try {
+                    throw new Exception("Could not open input stream.", e);
+                } catch (Exception e1) {
+                    grabberListener.onError(e1);
+                }
+//                System.exit(1);
             }
         });
         playThread.start();
@@ -179,6 +176,9 @@ public class SimplePlayer
 
     public void stop()
     {
-        playThread.interrupt();
+        if (playThread.isAlive()) {
+            LogHelper.e(TAG, "stop stream thread");
+            playThread.interrupt();
+        }
     }
 }
