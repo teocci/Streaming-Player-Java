@@ -46,9 +46,7 @@ public class VideoPaneManager
     {
         List<Pane> paneList = new ArrayList<>();
         if (!isEmpty()) {
-            for (VideoPane pane : panes.values()) {
-                paneList.add(pane);
-            }
+            paneList.addAll(panes.values());
         }
 
         return paneList;

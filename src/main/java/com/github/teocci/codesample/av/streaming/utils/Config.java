@@ -13,7 +13,8 @@ public class Config
 
     public static final int MAX_ITEMS = 3;
 
-    public static final String IMAGE_NO_VIDEO = "/images/no-video.png";
 
+    public static final String IMAGE_NO_VIDEO = "/images/no-video.png";
     public static final String IMAGE_ERROR = "/images/error.png";
+    public static final String IMAGE_HANDLER = "/images/handler.png";
 }
