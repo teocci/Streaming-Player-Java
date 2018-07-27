@@ -42,9 +42,6 @@ public class GroupVsPaneTest extends Application
     private Rectangle rect3 = new Rectangle(200, 200, 100, 100);
     private Rectangle rect4 = new Rectangle(200, 200, 100, 100);
 
-    private double lastDelta = 0;
-    private int count = 0;
-
     private String quadrant;
 
     @Override
@@ -113,7 +110,7 @@ public class GroupVsPaneTest extends Application
         BorderPane result = new BorderPane();
         result.setPadding(new Insets(15, 12, 15, 12));
 
-        Joystick joystickPane = new Joystick(RADIUS, 2);
+        Joystick joystickPane = new Joystick(RADIUS, 1);
         joystickPane.addEventHandler(QUADRANT_CHANGED.getEventType(), e -> {
             quadrant = getQuadrantToCommand(e.getQuadrant());
 //            LogHelper.e(TAG, "Whenever quadrant change: " + e.getQuadrant());
@@ -128,15 +125,6 @@ public class GroupVsPaneTest extends Application
             double deltaX = calculateDelta(e.getQuadrant(), e.getStrength());
             if (deltaX != 0) {
                 LogHelper.e(TAG, "(deltaX) -> (" + deltaX + ")");
-//            }
-
-//            if (deltaX == lastDelta) count++;
-//            else {
-//                lastDelta = deltaX;
-//                count = 0;
-//            }
-//            if (count < 4) {
-//                LogHelper.e(TAG, "(lastDelta, count) -> (" + lastDelta + ", " + count + ")");
                 rect3.setX(rect3.getX() + deltaX);
                 rect4.setX(rect4.getX() + deltaX);
             }

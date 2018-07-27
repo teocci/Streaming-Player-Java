@@ -171,7 +171,7 @@ public class StreamingAudioClient extends Application
 //        String sourceA = "rtsp://192.168.1.119:8086"; // the SmartCam app the video is bad
 //        String sourceB = "rtsp://192.168.1.128:8086"; // the SmartCam app the video is bad
 //        String sourceC = "rtsp://192.168.1.133:8086"; // the SmartCam app the video is bad
-        String sourceA = "rtsp://192.168.20.11:8086";
+        String sourceA = "rtsp://192.168.20.43:8086";
 
         primaryStage = stage;
         imageView = new ImageView();

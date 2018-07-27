@@ -186,7 +186,6 @@ public class JoystickEventProducer implements EventHandler<MouseEvent>
             return JoystickQuadrantEnum.NONE;
         } else {
 //            LogHelper.event(TAG, "whichQuadrant(" + x + ", " + y + ")");
-
             int angle = getAngle(x, y);
 //            LogHelper.event(TAG, "angle: " + angle);
 

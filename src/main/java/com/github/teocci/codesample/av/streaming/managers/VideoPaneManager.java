@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class VideoPaneManager
 {
-    private static final String TAG = LogHelper.makeLogTag(WindowManager.class);
+    private static final String TAG = LogHelper.makeLogTag(VideoPaneManager.class);
 
     private Map<String, VideoPane> panes = new ConcurrentHashMap<>();
     private ObservableList<Pane> paneList = FXCollections.observableArrayList(extractVideoViews());

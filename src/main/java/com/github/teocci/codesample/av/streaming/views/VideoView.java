@@ -22,6 +22,7 @@ public class VideoView
     private static final String TAG = LogHelper.makeLogTag(VideoView.class);
 
     private VideoController controller;
+
     private final WindowInfo windowInfo;
 
     private StackPane root = new StackPane();
@@ -105,5 +106,10 @@ public class VideoView
             LogHelper.e(TAG, "stageToFront");
             stage.toFront();
         }
+    }
+
+    public VideoController getController()
+    {
+        return controller;
     }
 }
