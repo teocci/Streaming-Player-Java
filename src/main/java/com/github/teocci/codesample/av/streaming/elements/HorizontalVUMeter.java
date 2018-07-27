@@ -38,6 +38,20 @@ public class HorizontalVUMeter extends Parent
         }
     };
 
+    public HorizontalVUMeter()
+    {
+        for (int i = 0; i < bars.length; i++) {
+            bars[i] = new Rectangle(2, 18);
+            bars[i].setFill(BASE_BAR_COLOR);
+
+            bars[i].setX(1 + (i * 4));
+            bars[i].setY(-9);
+        }
+        setTranslateX(4);
+        getChildren().addAll(bars);
+//        setEffect(DropShadowBuilder.create().blurType(TWO_PASS_BOX).radius(10).spread(0.4).color(SHADOW_COLOR).build());
+    }
+
     private void updateFill(int index, boolean color)
     {
         if (color) {
@@ -71,18 +85,4 @@ public class HorizontalVUMeter extends Parent
     public double getValue() { return value.get(); }
 
     public DoubleProperty valueProperty() { return value; }
-
-    public HorizontalVUMeter()
-    {
-        for (int i = 0; i < bars.length; i++) {
-            bars[i] = new Rectangle(2, 18);
-            bars[i].setFill(BASE_BAR_COLOR);
-
-            bars[i].setX(1 + (i * 4));
-            bars[i].setY(-9);
-        }
-        setTranslateX(4);
-        getChildren().addAll(bars);
-//        setEffect(DropShadowBuilder.create().blurType(TWO_PASS_BOX).radius(10).spread(0.4).color(SHADOW_COLOR).build());
-    }
 }

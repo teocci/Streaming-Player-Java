@@ -37,12 +37,6 @@ public class VUMeter extends Parent
         }
     };
 
-    public void setValue(double v) { value.set(v); }
-
-    public double getValue() { return value.get(); }
-
-    public DoubleProperty valueProperty() { return value; }
-
     public VUMeter()
     {
         for (int i = 0; i < bars.length; i++) {
@@ -60,4 +54,10 @@ public class VUMeter extends Parent
         getChildren().addAll(bars);
 //        setEffect(DropShadowBuilder.create().blurType(TWO_PASS_BOX).radius(10).spread(0.4).color(SHADOW_COLOR).build());
     }
+
+    public void setValue(double v) { value.set(v); }
+
+    public double getValue() { return value.get(); }
+
+    public DoubleProperty valueProperty() { return value; }
 }
