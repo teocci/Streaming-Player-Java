@@ -99,6 +99,7 @@ public class GroupVsPaneTest extends Application
 
             rect3.setX(rect3.getX() + deltaX);
             rect4.setX(rect4.getX() + deltaX);
+            LogHelper.e(TAG, "Slider");
         });
 
         primaryStage.setScene(scene);

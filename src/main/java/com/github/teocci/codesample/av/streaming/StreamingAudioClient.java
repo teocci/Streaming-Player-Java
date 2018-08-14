@@ -46,8 +46,6 @@ public class StreamingAudioClient extends Application
     private AudioPlayer audioPlayerB;
     private AudioPlayer audioPlayerC;
 
-    private FloatControl gainControl;
-
     private GrabberListener grabberListenerA = new GrabberListener()
     {
         @Override
